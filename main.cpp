@@ -8,7 +8,7 @@ using namespace std;
 int main () {
     int larghezzaCampo = 800;
     int altezzaCampo = 600;
-
+    
     SetRandomSeed(time(NULL));
 
     MotoreGioco engine = MotoreGioco(larghezzaCampo, altezzaCampo, BLACK);
