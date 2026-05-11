@@ -20,18 +20,18 @@ int main () {
             BeginDrawing();
             
             // 1. gestione eventi
-
+            engine.CollisioneBordi();
+            engine.CollisionePads();
+            engine.ControllaComandi();
 
             // 2. aggiornare posizioni
             engine.AggiornaPalla();
-
 
             // 3. disegnare
             BeginDrawing();
                 ClearBackground(BLACK);
 
                 engine.Disegna();
-                
                 
             EndDrawing();   
         }
