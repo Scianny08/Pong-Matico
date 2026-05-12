@@ -61,7 +61,7 @@ public:
 
         palla(15, WHITE),
         angolo(0),
-        velocitaPalla(600),
+        velocitaPalla(700),
 
         running(false)
 
@@ -111,9 +111,11 @@ public:
     }
 
     void AggiornaPalla() {
-        float nuovaX = cos(angolo*DEG2RAD) * CalcolaSpostamento(velocitaPalla) + palla.getPos().x;
-        float nuovaY = sin(angolo*DEG2RAD) * CalcolaSpostamento(velocitaPalla) + palla.getPos().y;
-        palla.setPos(nuovaX, nuovaY);
+        if (running) {
+            float nuovaX = cos(angolo*DEG2RAD) * CalcolaSpostamento(velocitaPalla) + palla.getPos().x;
+            float nuovaY = sin(angolo*DEG2RAD) * CalcolaSpostamento(velocitaPalla) + palla.getPos().y;
+            palla.setPos(nuovaX, nuovaY);
+        }
     }
 
     int PallaInPad() {
@@ -147,7 +149,29 @@ public:
     // - più il punto in cui la palla colpisce il pad si avvicina verso il centro del pad
     // - l'angolo della palla deve avvicinarsi a 0 o 180 gradi
     void CambioDirezione(Pad &pad) {
+        //calcolo differenza di altezza tra palla e altezza del centro del pad
+        //più la palla si avvicina a un estremo più tende alla massima angolazione
 
+        //calcolo fattore = differenzaY - valoreMassimo (altezza del centro pad)
+        //facendo ciò ottengo 3 valori che moltiplico per angolo
+        //1: ha colpito sopra
+        //0: ha colpito al centro
+        //-1: ha colpito in basso
+
+        float differenzaY = palla.getPos().y - (pad.getPos().y + (float)altezzaPad/2);
+        int angoloMassimo = 45; //angolo massimo di direzione
+        float fattoreInclinazione = differenzaY / ((float)altezzaPad/2.0f);
+
+        //se la palla ha colpito nella metà campo sinistra
+        if (palla.getPos().x < (float)larghezzaCampo/2) {
+            //allora l'angolo di riferimento è 0
+            angolo = fattoreInclinazione * angoloMassimo;
+        }
+        //sennò mi trovo nella metà campo destra
+        else {
+            //e l'angolo di riferimento è 180
+            angolo = 180 - fattoreInclinazione * angoloMassimo;
+        }
     }
 
     void CollisionePads() {
@@ -224,6 +248,10 @@ public:
         }
     }
     
+    bool isRunning() {
+        return running;
+    }
+
 };
 
 #endif

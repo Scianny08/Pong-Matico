@@ -1,6 +1,7 @@
 #ifndef PALLA_H //se NON è ancora stato definito (if not defined) un simbolo/identificatore chiamato SNAKE_H
 #define PALLA_H //allora definiscilo ora
 
+#include <cstddef>
 #include <functional>
 #include <raylib.h>
 using namespace std;
@@ -15,6 +16,7 @@ public:
     Palla(int raggio, Color colore) {
         this->raggio = raggio;
         this->colore = colore;
+        this->pos = {0,0};
     }
 
     void Disegna() {

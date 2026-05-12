@@ -17,13 +17,12 @@ public:
         this->larghezza = larghezza;
         this->altezza = altezza;
         this->colore = colore;
-        pos.x = 0;
-        pos.y = 0;
+        this->pos = {0,0};
     }
 
     void Disegna() {
         Rectangle rettangolo = {pos.x, pos.y, (float)larghezza, (float)altezza};
-        DrawRectangleRounded(rettangolo, 1, 16, colore);
+        DrawRectangleRounded(rettangolo, 0.8, 16, colore);
     }
 
     //altezza
