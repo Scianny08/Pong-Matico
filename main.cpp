@@ -10,7 +10,11 @@ int main () {
 
     const char* nomeGioco = "Pong Matico";
     float larghezzaNomeGioco;
-    float nomeGiocoFontSize = 40;
+    float nomeGiocoFontSize;
+
+    char testoPunti[10];
+    float larghezzaTestoPunti;
+    float testoPuntiFontSize;
 
     SetRandomSeed(time(NULL));
 
@@ -24,12 +28,11 @@ int main () {
 
             // 1. gestione eventi
             engine.ControllaComandi();
-            engine.AggiornaPalla();     // prima sposta la palla...
-            engine.CollisioneBordi();   // ...poi controlla dove si trova
-            engine.CollisionePads();
 
             // 2. aggiornare posizioni
-            // engine.AggiornaPalla();
+            engine.AggiornaPalla();
+            engine.CollisioneBordi();
+            engine.CollisionePads();
 
             // 3. disegnare
             BeginDrawing();
@@ -39,10 +42,24 @@ int main () {
                 
                 engine.Disegna();
                 
+                //nome gioco
+                nomeGiocoFontSize = 40;
                 larghezzaNomeGioco = MeasureText(nomeGioco, nomeGiocoFontSize);
                 DrawText(nomeGioco, larghezzaCampo/2-larghezzaNomeGioco/2, altezzaCampo*0.05, nomeGiocoFontSize, WHITE);
 
+                //punti sinistra
+                sprintf(testoPunti, "%d", engine.getPuntiSX());
+                testoPuntiFontSize = 30;
+                larghezzaTestoPunti = MeasureText(testoPunti, testoPuntiFontSize);
+                DrawText(testoPunti, larghezzaCampo/4-larghezzaTestoPunti, altezzaCampo*0.10, testoPuntiFontSize, engine.getPadSX().getColore());
+
+                //punti destra
+                sprintf(testoPunti, "%d", engine.getPuntiDX());
+                testoPuntiFontSize = 30;
+                larghezzaTestoPunti = MeasureText(testoPunti, testoPuntiFontSize);
+                DrawText(testoPunti, larghezzaCampo*3/4-larghezzaTestoPunti, altezzaCampo*0.10, testoPuntiFontSize, engine.getPadDX().getColore());
                 
+
             EndDrawing();
         }
 

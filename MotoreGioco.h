@@ -93,6 +93,8 @@ public:
 
                 running = true;
             }
+
+            
         }
     }
 
@@ -252,6 +254,34 @@ public:
         return running;
     }
 
+    Pad getPadDX() {
+        return padDX;
+    }
+
+    Pad getPadSX() {
+        return padSX;
+    }
+
+    int getPuntiDX() {
+        return puntiDX;
+    }
+
+    int getPuntiSX() {
+        return puntiSX;
+    }
+
+    void setPuntiDX(int puntiDX) {
+        this->puntiDX = puntiDX;
+    }
+
+    void setPuntiSX(int puntiSX) {
+        this->puntiSX = puntiSX;
+    }
+
+    void resetPunti() {
+        puntiDX = 0;
+        puntiSX = 0;
+    }
 };
 
 #endif
