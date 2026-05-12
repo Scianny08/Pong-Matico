@@ -31,6 +31,7 @@ private:
     int angolo;
     int velocitaPalla; //pixel al secondo
 
+    bool running;
 
 public:
     // Costruttore con "Initialization List" (la parte dopo i due punti ':')
@@ -59,30 +60,41 @@ public:
         velocitaPad(500),
 
         palla(15, WHITE),
-        velocitaPalla(300)
+        angolo(0),
+        velocitaPalla(600),
+
+        running(false)
 
         // Il corpo { } può essere usato per inizializzare attributi
         // dopo la creazione dal costruttore
-        {   
-            //centro campo
+        { };
+    
+
+    void NuovaPartita() {
+        if (!running) {
+            //palla a centro campo
             palla.setPos((float)larghezzaCampo/2, (float)altezzaCampo/2);
             
-            //direzione x random a destra o a sinistra
-            //0: sinistra, 1: destra
-            if (GetRandomValue(0, 1)) {
-                //1
-                angolo = 0;
-            } else {
-                //0
-                angolo = 180;
-            }
-
-            //pads
+            //posizionamento pads
             int centroYPad = (float)altezzaCampo/2-(float)altezzaPad/2;
             padSX.setPos(offsetPad, centroYPad);
             padDX.setPos(larghezzaCampo-larghezzaPad-offsetPad, centroYPad);
-        };
-    
+
+            //direzione x random a destra o a sinistra
+            //0: verso sinistra, 1: verso destra
+            if (IsKeyPressed(KEY_SPACE)) {
+                if (GetRandomValue(0, 1)) {
+                    //1:
+                    angolo = 0;
+                } else {
+                    //0
+                    angolo = 180;
+                }
+
+                running = true;
+            }
+        }
+    }
 
     void Disegna() {
         palla.Disegna();
@@ -90,14 +102,17 @@ public:
         padSX.Disegna();
     }
 
-    void AggiornaPalla() {//GetFrameTime restuisce un valore float che rappresenta il tempo, espresso in secondi, 
+    float CalcolaSpostamento(float velocita) {
+        //GetFrameTime restuisce un valore float che rappresenta il tempo, espresso in secondi, 
         //trascorso tra la fine del frame precedente e l'inizio di quello attuale
         //per assicurare che la palla si muova di 300 pixel in un secondo reale
         //indipendentemente dagli fps o dalla velocità del processore
-        float deltaTempo = GetFrameTime();
+        return velocita * GetFrameTime();
+    }
 
-        float nuovaX = cos(angolo*DEG2RAD) * velocitaPalla * deltaTempo + palla.getPos().x;
-        float nuovaY = sin(angolo*DEG2RAD) * velocitaPalla * deltaTempo + palla.getPos().y;
+    void AggiornaPalla() {
+        float nuovaX = cos(angolo*DEG2RAD) * CalcolaSpostamento(velocitaPalla) + palla.getPos().x;
+        float nuovaY = sin(angolo*DEG2RAD) * CalcolaSpostamento(velocitaPalla) + palla.getPos().y;
         palla.setPos(nuovaX, nuovaY);
     }
 
@@ -126,12 +141,41 @@ public:
         return -1;
     }
 
+    //Ogni pad è suddiviso in 2 parti uguali:
+    // - più la palla colpisce in alto o in basso più andrà verso l'alto
+    // - la palla non deve arrivare a 90 o 270 gradi
+    // - più il punto in cui la palla colpisce il pad si avvicina verso il centro del pad
+    // - l'angolo della palla deve avvicinarsi a 0 o 180 gradi
+    void CambioDirezione(Pad &pad) {
+
+    }
+
     void CollisionePads() {
         int ris = PallaInPad();
 
         if (ris != -1) {
-            angolo = 180 - angolo; //cambio direzione
             ultimoTocco = ris;
+            
+            //risoluzione al collision glue
+            //per cui la palla può rimanere incastrata nel pad
+            //ogni volta che la palla colpisce un pad la rimetto
+            //al margine del pad
+            float hitX;
+
+            if (ris == 0) {
+                hitX = padSX.getPos().x + larghezzaPad + palla.getRaggio() + 1;
+
+                //cambio direzione
+                CambioDirezione(padSX);
+
+            } else {
+                hitX = padDX.getPos().x - palla.getRaggio() - 1;
+
+                //cambio direzione
+                CambioDirezione(padDX);
+            }
+
+            palla.setPos(hitX, palla.getPos().y);
         }
     }
 
@@ -142,9 +186,12 @@ public:
         }
 
         //destra e sinistra: assegno punti
+        //faccio uscire un poco la palla dal campo per dare l'impressione che sia stata mancata
         if (palla.getPos().x >= larghezzaCampo || palla.getPos().x <= 0) {
             if (ultimoTocco == 0) puntiSX++;    //sinistra
             if (ultimoTocco == 1) puntiDX++;    //destra
+
+            running = false;
         }
     }
 
@@ -153,53 +200,28 @@ public:
         return pad.getPos().y + offsetPad >= altezzaCampo || pad.getPos().y - offsetPad <= 0;
     }
 
-    void muoviDX() {
-        bool sopra = IsKeyDown(KEY_UP);
-        bool sotto = IsKeyDown(KEY_DOWN);
-        float deltaTempo;
-
-        if (sopra) {
-            deltaTempo = GetFrameTime();
-            float nuovaY = padDX.getPos().y - velocitaPad * deltaTempo;
-            padDX.setPos(padDX.getPos().x, nuovaY);
+    //con la & pad diventa un riferimento
+    void muoviPad(Pad &pad, KeyboardKey sopra, KeyboardKey sotto) {
+        if (IsKeyDown(sopra)) {
+            float nuovaY = pad.getPos().y - CalcolaSpostamento(velocitaPad);
+            pad.setPos(pad.getPos().x, nuovaY);
         }
         
-        if (sotto) {
-            deltaTempo = GetFrameTime();
-            float nuovaY = padDX.getPos().y + velocitaPad * deltaTempo;
-            padDX.setPos(padDX.getPos().x, nuovaY);
+        if (IsKeyDown(sotto)) {
+            float nuovaY = pad.getPos().y + CalcolaSpostamento(velocitaPad);
+            pad.setPos(pad.getPos().x, nuovaY);
         }
 
-        if (PadFuoriBordo(padDX)) {
-            padDX.setPos(padDX.getPos().x, padDX.getPos().y);
-        }
-    }
-
-    void muoviSX() {
-        bool sopra = IsKeyDown(KEY_W);
-        bool sotto = IsKeyDown(KEY_S);
-        float deltaTempo;
-
-        if (sopra) {
-            deltaTempo = GetFrameTime();
-            float nuovaY = padSX.getPos().y - velocitaPad * deltaTempo;
-            padSX.setPos(padSX.getPos().x, nuovaY);
-        }
-        
-        if (sotto) {
-            deltaTempo = GetFrameTime();
-            float nuovaY = padSX.getPos().y + velocitaPad * deltaTempo;
-            padSX.setPos(padSX.getPos().x, nuovaY);
-        }
-
-        if (PadFuoriBordo(padSX)) {
-            padSX.setPos(padSX.getPos().x, padSX.getPos().y);
+        if (PadFuoriBordo(pad)) {
+            pad.setPos(pad.getPos().x, pad.getPos().y);
         }
     }
 
     void ControllaComandi() {
-        muoviDX();
-        muoviSX();
+        if (running) {
+            muoviPad(padDX, KEY_UP, KEY_DOWN);
+            muoviPad(padSX, KEY_W, KEY_S);
+        }
     }
     
 };

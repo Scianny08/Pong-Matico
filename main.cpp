@@ -17,8 +17,8 @@ int main () {
         SetTargetFPS(60);
 
         while (WindowShouldClose() == false) {
-            BeginDrawing();
-            
+            engine.NuovaPartita();
+
             // 1. gestione eventi
             engine.CollisioneBordi();
             engine.CollisionePads();
