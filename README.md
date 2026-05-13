@@ -32,4 +32,5 @@ pong/
 └── Pad.h             # Classe pad
 ```
 
+## Preview del gioco
 ![Screenshot](screenshot.png)
