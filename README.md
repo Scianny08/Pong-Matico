@@ -25,7 +25,7 @@ Premi **SPAZIO** per lanciare la palla ad inizio partita. Il primo giocatore a r
 ## Struttura del progetto
 
 ```
-pong/
+Pong-Matico/
 ├── main.cpp          # Entry point e game loop
 ├── MotoreGioco.h     # Logica principale del gioco
 ├── Palla.h           # Classe palla
