@@ -219,13 +219,18 @@ public:
 
             running = false;
         }
+
+        float limiteSup = altezzaCampo - altezzaPad - offsetPad;
+        float limiteInf = offsetPad;
+
+        if (padSX.getPos().y < limiteInf) padSX.setPos(padSX.getPos().x, limiteInf);
+        if (padSX.getPos().y > limiteSup) padSX.setPos(padSX.getPos().x, limiteSup);
+
+        if (padDX.getPos().y < limiteInf) padDX.setPos(padDX.getPos().x, limiteInf);
+        if (padDX.getPos().y > limiteSup) padDX.setPos(padDX.getPos().x, limiteSup);
     }
 
     //comandi
-    bool PadFuoriBordo(Pad pad) {
-        return pad.getPos().y + offsetPad >= altezzaCampo || pad.getPos().y - offsetPad <= 0;
-    }
-
     //con la & pad diventa un riferimento
     void muoviPad(Pad &pad, KeyboardKey sopra, KeyboardKey sotto) {
         if (IsKeyDown(sopra)) {
@@ -236,10 +241,6 @@ public:
         if (IsKeyDown(sotto)) {
             float nuovaY = pad.getPos().y + CalcolaSpostamento(velocitaPad);
             pad.setPos(pad.getPos().x, nuovaY);
-        }
-
-        if (PadFuoriBordo(pad)) {
-            pad.setPos(pad.getPos().x, pad.getPos().y);
         }
     }
 
@@ -282,6 +283,15 @@ public:
         puntiDX = 0;
         puntiSX = 0;
     }
+
+    int getRaggio() {
+        return palla.getRaggio();
+    }
+
+    void setRaggio(int raggio) {
+        palla.setRaggio(raggio);
+    }
+
 };
 
 #endif

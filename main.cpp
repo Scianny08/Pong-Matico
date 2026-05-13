@@ -16,6 +16,8 @@ int main () {
     float larghezzaTestoPunti;
     float testoPuntiFontSize;
 
+    const Color GRIGIO = {30, 30, 30, 255};
+
     SetRandomSeed(time(NULL));
 
     MotoreGioco engine = MotoreGioco(larghezzaCampo, altezzaCampo, BLACK);
@@ -38,7 +40,12 @@ int main () {
             BeginDrawing();
                 ClearBackground(BLACK);
                 
-                DrawLineBezier({larghezzaCampo/2, 0}, {larghezzaCampo/2, altezzaCampo}, 10, {30, 30, 30, 255});
+                DrawLineBezier({larghezzaCampo/2, 0}, {larghezzaCampo/2, altezzaCampo}, 10, GRIGIO);
+                
+                DrawCircleV({larghezzaCampo/2, altezzaCampo/2}, 60 + 5, GRIGIO);
+                DrawCircleV({larghezzaCampo/2, altezzaCampo/2}, 60, BLACK);
+                
+                DrawCircle(larghezzaCampo/2, altezzaCampo/2, engine.getRaggio()*0.9, GRIGIO);
                 
                 engine.Disegna();
                 
