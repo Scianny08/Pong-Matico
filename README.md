@@ -21,7 +21,6 @@ Premi **SPAZIO** per lanciare la palla ad inizio partita. Il primo giocatore a r
 |---|---|---|
 | Su | `W` | `↑` |
 | Giù | `S` | `↓` |
-| Lancia | `SPAZIO` | `SPAZIO` |
 
 ## Struttura del progetto
 
@@ -32,3 +31,5 @@ pong/
 ├── Palla.h           # Classe palla
 └── Pad.h             # Classe pad
 ```
+
+![Screenshot](screenshot.png)
