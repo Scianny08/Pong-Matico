@@ -213,7 +213,7 @@ public:
 
         //destra e sinistra: assegno punti
         //faccio uscire un poco la palla dal campo per dare l'impressione che sia stata mancata
-        if (palla.getPos().x >= larghezzaCampo || palla.getPos().x <= 0) {
+        if (palla.getPos().x - palla.getRaggio()*3 >= larghezzaCampo || palla.getPos().x + palla.getRaggio()*3 <= 0) {
             if (ultimoTocco == 0) puntiSX++;    //sinistra
             if (ultimoTocco == 1) puntiDX++;    //destra
 
