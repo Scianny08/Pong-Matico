@@ -1,6 +1,6 @@
 # 🏓 Pong Matico
 
-Un clone di Pong a due giocatori sviluppato in C++ con [Raylib](https://www.raylib.com/).
+Un clone di Pong a due giocatori in locale sviluppato in C++ con [Raylib](https://www.raylib.com/).
 
 ## Requisiti
 
